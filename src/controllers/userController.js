@@ -66,3 +66,77 @@ export const authenticateUser = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+export const getUserById = async (req, res) => {
+    try {
+        const id = req.params.user_id;
+
+        const user = await User.findByPk(id, {
+            attributes: ["id", "username", "admin"],
+        });
+
+        if (!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if ((req.user.user_id != req.params.user_id) && !req.user.admin){
+            console.log(req.user.admin)
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+
+        res.json({
+            user_id: user.id,
+            username: user.username,
+            admin: user.admin
+        })
+    } catch (error) {
+        console.log("Error getting user: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const getAllUsers = async (req, res) => {
+    try {
+        if(!req.user.admin){
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+        const users = await User.findAll({
+            attributes: ["id", "username", "admin"],
+        });
+
+        const formattedUsers = users.map(user => ({
+            user_id: user.id,
+            username: user.username,
+            admin: user.admin
+        })) 
+
+        res.json(formattedUsers)
+    } catch (error) {
+        console.log("Error getting users: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const deleteUserById = async (req, res) => {
+    try {
+        if(!req.user.admin){
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+
+        const id = req.params.user_id;
+
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        await user.destroy();
+
+        res.json({ message: "User deleted" });
+
+    } catch (error) {
+        console.log("Error deleting user: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
