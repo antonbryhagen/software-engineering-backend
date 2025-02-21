@@ -1,29 +1,28 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  const User = sequelize.define("User", {
+  const Schedule = sequelize.define("Schedule", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    username: {
-      type: DataTypes.STRING,
-      unique: true,
+    deviceId: {
+      type: DataTypes.INTEGER,
+      references: { model: "Devices", key: "id" },
       allowNull: false
     },
-    password: {
+    actionType: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    admin: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
+    scheduleTime: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {
-    tableName: "Users",
-    timestamps: true
+    tableName: "Schedules"
   });
 
-  return User;
+  return Schedule;
 };

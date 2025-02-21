@@ -1,7 +1,7 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  const Device = sequelize.define('Device', {
+  const Device = sequelize.define("Device", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -14,7 +14,7 @@ export default (sequelize) => {
     status: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'off'
+      defaultValue: "off"
     },
     lastUpdate: {
       type: DataTypes.DATE,
@@ -25,7 +25,9 @@ export default (sequelize) => {
       allowNull: false
     }
   }, {
-    tableName: 'Devices'
+    tableName: "Devices",
+    timestamps: true
   });
+
   return Device;
 };

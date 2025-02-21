@@ -1,4 +1,3 @@
-// models/index.js (ESM version)
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,10 +19,8 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// We'll store models here
 const db = {};
 
-// Read all JS files in this directory (except index.js itself)
 const modelFiles = fs
   .readdirSync(__dirname)
   .filter((file) => {
@@ -35,25 +32,51 @@ const modelFiles = fs
     );
   });
 
-// Dynamically import each model file
 for (const file of modelFiles) {
-  // Import the model file
   const modelModule = await import(path.join(__dirname, file));
-  // The default export from each model file is a function: (sequelize, DataTypes) => model
   const model = modelModule.default(sequelize, Sequelize.DataTypes);
   db[model.name] = model;
 }
 
-// If any models have an associate() method, call it
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+db.User.hasMany(db.Permission, { foreignKey: "userId" });
+db.User.hasMany(db.Action, { foreignKey: "userId" });
+db.User.hasMany(db.Schedule, { foreignKey: "userId" });
 
-// Attach sequelize instances
+db.Device.hasMany(db.Sensor, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Permission, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Action, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Log, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Schedule, { foreignKey: "deviceId" });
+
+db.Sensor.belongsTo(db.Device, { foreignKey: "deviceId" });
+db.Sensor.hasMany(db.Log, { foreignKey: "sensorId" });
+
+db.Permission.belongsTo(db.User, { foreignKey: "userId" });
+db.Permission.belongsTo(db.Device, { foreignKey: "deviceId" });
+
+db.Action.belongsTo(db.User, { foreignKey: "userId" });
+db.Action.belongsTo(db.Device, { foreignKey: "deviceId" });
+
+db.Log.belongsTo(db.Device, { foreignKey: "deviceId" });
+db.Log.belongsTo(db.Sensor, { foreignKey: "sensorId" });
+
+db.Schedule.belongsTo(db.User, { foreignKey: "userId" });
+db.Schedule.belongsTo(db.Device, { foreignKey: "deviceId" });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// Export as the default ESM export
+const initDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log(" Database connected");
+    await sequelize.sync({ alter: true });
+    console.log(" Tables synchronized");
+  } catch (error) {
+    console.error(" Database connection error:", error);
+  }
+};
+
+initDB();
+
 export default db;
