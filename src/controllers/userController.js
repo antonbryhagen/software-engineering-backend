@@ -12,7 +12,6 @@ export const createUser = async (req, res) => {
             return res.status(400).json({message: "Username and password required"});
         } 
 
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
@@ -27,7 +26,9 @@ export const createUser = async (req, res) => {
 
     } catch (error) {
         console.log("Error creating user: ", error);
-        //TODO: Send back correct error for username already exists
+        if (error.name == "SequelizeUniqueConstraintError") {
+            return res.status(500).json({ message: "Username already exists" });
+        }
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
