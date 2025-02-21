@@ -63,7 +63,6 @@ export const authenticateUser = async (req, res) => {
         
     } catch (error) {
         console.log("Error authenticating user: ", error);
-        //TODO: Send back correct error
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
