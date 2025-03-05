@@ -21,7 +21,7 @@ export const createUser = async (req, res) => {
 
         return res.status(201).json({
             message: "Created user",
-            id: newUser.id
+            user_id: newUser.id
         })
 
     } catch (error) {
