@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import Sequelize from "sequelize";
 import process from "process";
 import configFile from "../config/config.json" with { type: "json" };
@@ -33,7 +33,8 @@ const modelFiles = fs
   });
 
 for (const file of modelFiles) {
-  const modelModule = await import(path.join(__dirname, file));
+  const fileUrl = pathToFileURL(path.join(__dirname, file)).href;
+  const modelModule = await import(fileUrl);
   const model = modelModule.default(sequelize, Sequelize.DataTypes);
   db[model.name] = model;
 }
