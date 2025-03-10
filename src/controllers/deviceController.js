@@ -119,7 +119,7 @@ export const updateDevice = async (req, res) => {
 		}
 
         currentDevice.deviceName = device_name || currentDevice.deviceName;
-        currentDevice.deviceType = device_type || currentDevice.deviceType;
+        /*SHOULD NOT BE SET BY API, TROUGH ARDUINO / SIMULATED HOUSEcurrentDevice.deviceType = device_type || currentDevice.deviceType;*/
         //currentDevice.location = location || currentDevice.location;
 
 		await currentDevice.save();
