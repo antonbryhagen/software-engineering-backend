@@ -3,7 +3,7 @@ import db from "../../models/index.js"
 
 const { Device } = db;
 
-export const addDeviceToDB = async (req, res) => {
+/*export const addDeviceToDB = async (req, res) => {
     try {
         const { device_name, device_type, location, status } = req.body;
 
@@ -30,7 +30,7 @@ export const addDeviceToDB = async (req, res) => {
         console.log("Error adding device: ", error);
         return res.status(500).json({ message: "Internal Server Error" });
     }
-}
+}*/
 
 export const getAllDevices = async (req, res) => {
     try {
@@ -38,7 +38,7 @@ export const getAllDevices = async (req, res) => {
         //check permssions table for which devices to get
 
         const devices = await Device.findAll({
-            attributes: ["id", "deviceType", "deviceName", "status", "lastUpdate", "updatedAt", "createdAt"],
+            attributes: ["id", "deviceType", "deviceName", "status", "location", "lastUpdate", "updatedAt", "createdAt", "registered"],
         });
 
         const formattedDevices = devices.map(device => ({
@@ -46,9 +46,11 @@ export const getAllDevices = async (req, res) => {
             device_name: device.deviceName,
             device_type: device.deviceType,
             status: device.status,
+            //location: device.location,
             last_update: device.lastUpdate,
             updated_at: device.updatedAt,
-            created_at: device.createdAt
+            created_at: device.createdAt,
+            //registered: device.registered
         })) 
 
         res.json(formattedDevices)
@@ -59,9 +61,54 @@ export const getAllDevices = async (req, res) => {
     }
 }
 
+export const registerDevice = async (req, res) => {
+
+    try {
+
+        if(!req.user.admin){
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+
+        const id = req.params.device_id;
+        const { device_name, location, status } = req.body;
+
+        const currentDevice = await Device.findByPk(id);
+
+		if (!currentDevice){
+			return res.status(404).json({ message: "Device not found" });
+		}
+
+        if (!device_name || !location) {
+            return res.status(400).json({ message: "Missing required data" });
+        }
+
+        currentDevice.deviceName = device_name;
+        currentDevice.status = status || currentDevice.status;
+        //currentDevice.location = location;
+        currentDevice.registered = true;
+
+		await currentDevice.save();
+
+        res.json( {
+            message: "Device registered",
+            device_id: currentDevice.id,
+            device_name: device_name,
+            status: status ? status : currentDevice.status
+        } );
+
+    } catch (error) {
+        console.log("Error registering device: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
 export const updateDevice = async (req, res) => {
 
     try {
+        if(!req.user.admin){
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+
         const id = req.params.device_id;
         const { device_name, device_type, location } = req.body;
 

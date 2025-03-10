@@ -1,12 +1,12 @@
 import express from "express";
 import jwtValidator from "../middleware/jwtValidator.js";
 
-import { getAllDevices,	addDeviceToDB, updateDevice, deleteDevice, toggleDevice } from "../controllers/deviceController.js";
+import { getAllDevices, updateDevice, deleteDevice, toggleDevice, registerDevice } from "../controllers/deviceController.js";
 
 
 const router = express.Router();
 
-router.post("/", jwtValidator, addDeviceToDB )
+router.patch("/", jwtValidator, registerDevice)
 
 router.get("/", jwtValidator, getAllDevices)
 
