@@ -12,8 +12,6 @@ export const createUser = async (req, res) => {
             return res.status(400).json({message: "Username and password required"});
         } 
 
-        console.log(admin)
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({

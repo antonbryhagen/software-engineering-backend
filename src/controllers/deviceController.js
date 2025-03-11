@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import db from "../../models/index.js"
+import { status } from "init";
+import { where } from "sequelize";
 
 const { Device } = db;
 
@@ -155,6 +157,7 @@ export const toggleDevice = async (req, res) => {
     try{
 		const id = req.params.device_id;
         const newStatus = req.body.status;
+        const userId = req.user.user_id;
 
 		const device = await Device.findByPk(id);
 
@@ -176,9 +179,14 @@ export const toggleDevice = async (req, res) => {
 
         console.log(messageForDevice)
 
-		device.status = newStatus;
+		// device.status = newStatus;
 
-		await device.save();
+		// await device.save();
+
+        await Device.update(
+            { status: newStatus, updatedBy: userId },
+            { where: { id }, individualHooks: true }
+        )
 	
 		res.json({ device_id: device.id, status: newStatus });
 
