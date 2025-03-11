@@ -23,10 +23,13 @@ export default (sequelize) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
     },
-    deviceId: {
-      type: DataTypes.INTEGER,
-      references: { model: "Devices", key: "id" },
-      allowNull: false
+    registered: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     tableName: "Sensors",
