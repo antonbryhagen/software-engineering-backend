@@ -35,8 +35,6 @@ const { Device } = db;
 export const getAllDevices = async (req, res) => {
     try {
 
-        //check permssions table for which devices to get
-
         const devices = await Device.findAll({
             attributes: ["id", "deviceType", "deviceName", "status", "location", "lastUpdate", "updatedAt", "createdAt", "registered"],
         });
@@ -46,11 +44,11 @@ export const getAllDevices = async (req, res) => {
             device_name: device.deviceName,
             device_type: device.deviceType,
             status: device.status,
-            //location: device.location,
+            location: device.location,
             last_update: device.lastUpdate,
             updated_at: device.updatedAt,
             created_at: device.createdAt,
-            //registered: device.registered
+            registered: device.registered
         })) 
 
         res.json(formattedDevices)
@@ -84,7 +82,7 @@ export const registerDevice = async (req, res) => {
 
         currentDevice.deviceName = device_name;
         currentDevice.status = status || currentDevice.status;
-        //currentDevice.location = location;
+        currentDevice.location = location;
         currentDevice.registered = true;
 
 		await currentDevice.save();
@@ -120,7 +118,7 @@ export const updateDevice = async (req, res) => {
 
         currentDevice.deviceName = device_name || currentDevice.deviceName;
         /*SHOULD NOT BE SET BY API, TROUGH ARDUINO / SIMULATED HOUSEcurrentDevice.deviceType = device_type || currentDevice.deviceType;*/
-        //currentDevice.location = location || currentDevice.location;
+        currentDevice.location = location || currentDevice.location;
 
 		await currentDevice.save();
 
