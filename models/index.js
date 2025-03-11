@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import Sequelize from "sequelize";
 import process from "process";
-import configFile from "../config/config.json" with { type: "json" };
+import configFile from "../config/config.json" assert { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,21 +39,14 @@ for (const file of modelFiles) {
   db[model.name] = model;
 }
 
-db.User.hasMany(db.Permission, { foreignKey: "userId" });
 db.User.hasMany(db.Action, { foreignKey: "userId" });
 db.User.hasMany(db.Schedule, { foreignKey: "userId" });
 
-db.Device.hasMany(db.Sensor, { foreignKey: "deviceId" });
-db.Device.hasMany(db.Permission, { foreignKey: "deviceId" });
 db.Device.hasMany(db.Action, { foreignKey: "deviceId" });
 db.Device.hasMany(db.Log, { foreignKey: "deviceId" });
 db.Device.hasMany(db.Schedule, { foreignKey: "deviceId" });
 
-db.Sensor.belongsTo(db.Device, { foreignKey: "deviceId" });
 db.Sensor.hasMany(db.Log, { foreignKey: "sensorId" });
-
-db.Permission.belongsTo(db.User, { foreignKey: "userId" });
-db.Permission.belongsTo(db.Device, { foreignKey: "deviceId" });
 
 db.Action.belongsTo(db.User, { foreignKey: "userId" });
 db.Action.belongsTo(db.Device, { foreignKey: "deviceId" });
@@ -70,11 +63,11 @@ db.Sequelize = Sequelize;
 const initDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log(" Database connected");
+    console.log("Database connected");
     await sequelize.sync({ alter: true });
-    console.log(" Tables synchronized");
+    console.log("Tables synchronized");
   } catch (error) {
-    console.error(" Database connection error:", error);
+    console.error("Database connection error:", error);
   }
 };
 
