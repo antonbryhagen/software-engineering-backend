@@ -6,17 +6,20 @@ const { User } = db;
 
 export const createUser = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, admin } = req.body;
 
         if (!username || !password) {
             return res.status(400).json({message: "Username and password required"});
         } 
 
+        console.log(admin)
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
             username,
-            password: hashedPassword
+            password: hashedPassword,
+            admin: admin ? admin : false
         });
 
         return res.status(201).json({

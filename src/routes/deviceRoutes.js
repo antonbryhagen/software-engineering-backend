@@ -6,7 +6,7 @@ import { getAllDevices, updateDevice, deleteDevice, toggleDevice, registerDevice
 
 const router = express.Router();
 
-router.patch("/", jwtValidator, registerDevice)
+router.patch("/:device_id", jwtValidator, registerDevice)
 
 router.get("/", jwtValidator, getAllDevices)
 
@@ -14,7 +14,7 @@ router.put("/:device_id", jwtValidator, updateDevice)
 
 router.delete("/:device_id", jwtValidator, deleteDevice)
 
-router.post("/:device_id/toggle", jwtValidator, toggleDevice)
+router.patch("/:device_id/toggle", jwtValidator, toggleDevice)
 
 
 export default router;
