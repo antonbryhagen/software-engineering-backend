@@ -58,6 +58,12 @@ parser.on("data", async (data) => {
           return;
         }
 
+        const sensorExists = await db.Sensor.findByPk(jsonData.sensor_id);
+        if (!sensorExists) {
+          console.error(`Error: Sensor with ID ${jsonData.sensor_id} not found.`);
+          return;
+        }
+
         await db.Sensor.update(
           {
             value: jsonData.value || 0,
