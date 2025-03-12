@@ -134,6 +134,11 @@ export const updateDevice = async (req, res) => {
 
 export const deleteDevice = async (req, res) => {
 	try{
+
+        if(!req.user.admin){
+            return res.status(403).json({ message: "Invalid authorization" });
+        }
+
 		const id = req.params.device_id;
 
 		const device = await Device.findByPk(id);
