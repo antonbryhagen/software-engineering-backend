@@ -2,7 +2,7 @@ import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
 
 export const port = new SerialPort({
-    path: '/dev/cu.usbmodem11201', // Change this to your serial port path
+    path: '/dev/cu.usbmodem1201', // Change this to your serial port path
     baudRate: 9600
 });
 

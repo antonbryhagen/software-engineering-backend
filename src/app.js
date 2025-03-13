@@ -5,6 +5,8 @@ import deviceRoutes from "./routes/deviceRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
+import "./serial/serialListener.js";
+
 const app = express();
 
 app.use(cors());
