@@ -1,6 +1,6 @@
 import { port } from './serialConnection.js';
 
-export function sendJsonMessage(jsonMessage) {
+export function sendSerialJson(jsonMessage) {
     if (!port.isOpen) {
         console.error('Serial port not open.');
         return;
