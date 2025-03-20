@@ -165,15 +165,12 @@ export const toggleDevice = async (req, res) => {
             return res.status(400).json({ message: "No updated status provided" });
         }
 
-        //TODO Send message to actual device to toggle
-
         const messageForDevice = {
             message_type: "device_update",
             device_id: parseInt(id),
             status: newStatus
         }
 
-        //console.log(messageForDevice)
         sendSerialJson(messageForDevice);
 
         await Device.update(
