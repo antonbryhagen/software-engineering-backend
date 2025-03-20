@@ -12,6 +12,11 @@ export default (sequelize) => {
       references: { model: "Devices", key: "id" },
       allowNull: true
     },
+    sensorId: {
+      type: DataTypes.INTEGER,
+      references: { model: "Sensors", key: "id" },
+      allowNull: true
+    },
     eventDescription: {
       type: DataTypes.STRING,
       allowNull: false
