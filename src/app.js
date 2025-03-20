@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 
 import deviceRoutes from "./routes/deviceRoutes.js";
+import sensorRoutes from "./routes/sensorRoutes.js";
+import logRoutes from "./routes/logRoutes.js";
+import actionRoutes from "./routes/actionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -13,7 +16,10 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/devices", deviceRoutes);
+app.use("/sensors", sensorRoutes);
+app.use("/logs", logRoutes);
+app.use("/actions", actionRoutes);
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes)
+app.use("/users", userRoutes);
 
 export default app;
