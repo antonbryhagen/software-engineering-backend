@@ -20,7 +20,6 @@ if (useSerial) {
 
             if (existingDevice) {
               console.log("Existing Device Found:", existingDevice.toJSON());
-
               sendSerialJson({ message_type: "registered", device_id: existingDevice.id });
             } else {
               const newDevice = await db.Device.create({
@@ -33,27 +32,34 @@ if (useSerial) {
               });
 
               console.log("New Device Registered:", newDevice.toJSON());
-
               sendSerialJson({ message_type: "registered", device_id: newDevice.id });
             }
-          } else {
-            console.error("Error: Missing `device_type` or `pin` in register message.");
-          }
-          break;
-
-
-        case "device_update":
-          if (!jsonData.device_id) {
-            console.error("Error: Missing `device_id` in device_update message.");
-            return;
           }
 
-          await db.Device.update(
-            { status: jsonData.status || "unknown" },
-            { where: { id: jsonData.device_id }, individualHooks: true }
-          );
+          else if (jsonData.sensor_type && jsonData.pin !== undefined) {
+            const existingSensor = await db.Sensor.findOne({ where: { pin: jsonData.pin } });
 
-          console.log(`Device ${jsonData.device_id} updated to ${jsonData.status}`);
+            if (existingSensor) {
+              console.log("Existing Sensor Found:", existingSensor.toJSON());
+              sendSerialJson({ message_type: "registered", sensor_id: existingSensor.id });
+            } else {
+              const newSensor = await db.Sensor.create({
+                sensorType: jsonData.sensor_type,
+                value: 0,
+                unit: jsonData.unit || "Unknown",
+                location: "Unknown",
+                registered: false,
+                pin: jsonData.pin
+              });
+
+              console.log("New Sensor Registered:", newSensor.toJSON());
+              sendSerialJson({ message_type: "registered", sensor_id: newSensor.id });
+            }
+          }
+
+          else {
+            console.error("Error: Missing `device_type`, `sensor_type`, or `pin` in register message.");
+          }
           break;
 
         case "sensor_data":
@@ -87,6 +93,4 @@ if (useSerial) {
       console.error("Error processing serial data:", error);
     }
   });
-
 }
-
