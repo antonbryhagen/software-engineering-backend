@@ -5,39 +5,10 @@ import { where } from "sequelize";
 import { sendSerialJson } from "../serial/serialSender.js";
 
 const { Device } = db;
-
-/*export const addDeviceToDB = async (req, res) => {
-    try {
-        const { device_name, device_type, location, status } = req.body;
-
-        if (!device_name || !device_type || !location) {
-            return res.status(400).json({message: "Missing required data"});
-        } 
-
-        const newDevice = await Device.create({
-            deviceName: device_name,
-            deviceType: device_type,
-            status: status ? status : "off", //default off status, else pass in status wanted
-            lastUpdate: new Date()
-            //location: location,
-        });
-
-        return res.status(201).json({
-            message: "Device added to database",
-            device_id: newDevice.id,
-            device_name: newDevice.deviceName,
-            status: newDevice.status
-        })
-
-    } catch (error) {
-        console.log("Error adding device: ", error);
-        return res.status(500).json({ message: "Internal Server Error" });
-    }
-}*/
+const { Log } = db;
 
 export const getAllDevices = async (req, res) => {
     try {
-
         const devices = await Device.findAll({
             attributes: ["id", "deviceType", "deviceName", "status", "location", "lastUpdate", "updatedAt", "createdAt", "registered"],
         });
@@ -58,19 +29,24 @@ export const getAllDevices = async (req, res) => {
 
     } catch (error) {
         console.log("Error getting all devices: ", error);
+
+        await Log.create({
+            deviceId: null,
+            eventDescription: "Error getting all devices." + error,
+        });
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 
 export const registerDevice = async (req, res) => {
-
+    let id;
     try {
 
         if(!req.user.admin){
             return res.status(403).json({ message: "Invalid authorization" });
         }
 
-        const id = req.params.device_id;
+        id = req.params.device_id;
         const { device_name, location, status } = req.body;
 
         const currentDevice = await Device.findByPk(id);
@@ -99,18 +75,22 @@ export const registerDevice = async (req, res) => {
 
     } catch (error) {
         console.log("Error registering device: ", error);
+        await Log.create({
+            deviceId: id,
+            eventDescription: "Error registering device. " + error,
+        });
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 
 export const updateDevice = async (req, res) => {
-
+    let id;
     try {
         if(!req.user.admin){
             return res.status(403).json({ message: "Invalid authorization" });
         }
 
-        const id = req.params.device_id;
+        id = req.params.device_id;
         const { device_name, device_type, location } = req.body;
 
         const currentDevice = await Device.findByPk(id);
@@ -129,18 +109,23 @@ export const updateDevice = async (req, res) => {
 
     } catch (error) {
         console.log("Error updating device: ", error);
+        await Log.create({
+            deviceId: id,
+            eventDescription: "Error updating device. " + error,
+        });
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 
 export const deleteDevice = async (req, res) => {
+    let id;
 	try{
 
         if(!req.user.admin){
             return res.status(403).json({ message: "Invalid authorization" });
         }
 
-		const id = req.params.device_id;
+		id = req.params.device_id;
 
 		const device = await Device.findByPk(id);
 
@@ -153,15 +138,20 @@ export const deleteDevice = async (req, res) => {
 		res.json({ message: "Device deleted" });
 
 	} catch (error) {
-		console.log("Error updating device: ", error);
+		console.log("Error deleting device: ", error);
+        await Log.create({
+            deviceId: id,
+            eventDescription: "Error deleting device. " + error,
+        });
 		return res.status(500).json({ message: "Internal Server Error" });
 	}
 	
 }
 
 export const toggleDevice = async (req, res) => {
+    let id;
     try{
-		const id = req.params.device_id;
+		id = req.params.device_id;
         const newStatus = req.body.status;
         const userId = req.user.user_id;
 
@@ -175,15 +165,12 @@ export const toggleDevice = async (req, res) => {
             return res.status(400).json({ message: "No updated status provided" });
         }
 
-        //TODO Send message to actual device to toggle
-
         const messageForDevice = {
             message_type: "device_update",
             device_id: parseInt(id),
             status: newStatus
         }
 
-        //console.log(messageForDevice)
         sendSerialJson(messageForDevice);
 
         await Device.update(
@@ -194,7 +181,11 @@ export const toggleDevice = async (req, res) => {
 		res.json({ device_id: device.id, status: newStatus });
 
 	} catch (error) {
-		console.log("Error updating device: ", error);
+		console.log("Error toggling device: ", error);
+        await Log.create({
+            deviceId: id,
+            eventDescription: "Error toggling device. " + error,
+        });
 		return res.status(500).json({ message: "Internal Server Error" });
 	}
 }
