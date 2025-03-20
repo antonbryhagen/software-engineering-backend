@@ -1,5 +1,6 @@
 import { parser } from "./serialConnection.js";
 import db from "../../models/index.js";
+import { sendSerialJson } from "./serialSender.js";
 
 parser.on("data", async (data) => {
   try {
@@ -23,6 +24,8 @@ parser.on("data", async (data) => {
           });
 
           console.log("Device Registered:", newDevice.toJSON());
+          /**********  SEND ID TO ARDUINO  ***********/
+          sendSerialJson({  message_type: "registered", device_id: newDevice.id });
         }
 
         if (jsonData.sensor_type) {

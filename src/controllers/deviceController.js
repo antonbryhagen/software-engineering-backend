@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import db from "../../models/index.js"
 import { status } from "init";
 import { where } from "sequelize";
+import { sendSerialJson } from "../serial/serialSender.js";
 
 const { Device } = db;
 
@@ -182,11 +183,8 @@ export const toggleDevice = async (req, res) => {
             status: newStatus
         }
 
-        console.log(messageForDevice)
-
-		// device.status = newStatus;
-
-		// await device.save();
+        //console.log(messageForDevice)
+        sendSerialJson(messageForDevice);
 
         await Device.update(
             { status: newStatus, updatedBy: userId },
