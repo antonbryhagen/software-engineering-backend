@@ -30,11 +30,17 @@ export default (sequelize) => {
     location: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    pin: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
     }
-  }, {
-    tableName: "Sensors",
-    timestamps: true
-  });
+  },
+    {
+      tableName: "Sensors",
+      timestamps: true
+    });
 
   return Sensor;
 };

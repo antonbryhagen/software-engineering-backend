@@ -39,6 +39,11 @@ export default (sequelize) => {
         allowNull: true,
         references: { model: "Users", key: "id" },
       },
+      pin: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+      }
     },
     {
       tableName: "Devices",
