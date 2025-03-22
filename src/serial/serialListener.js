@@ -21,6 +21,8 @@ if (useSerial) {
             if (existingDevice) {
               console.log("Existing Device Found:", existingDevice.toJSON());
               sendSerialJson({ message_type: "registered", device_id: existingDevice.id });
+              // Send saved status to device
+              setTimeout(() => {sendSerialJson({ message_type: "device_update", device_id: existingDevice.id, status: existingDevice.status });}, 1000);
             } else {
               const newDevice = await db.Device.create({
                 deviceName: `Auto_${jsonData.device_type}`,
