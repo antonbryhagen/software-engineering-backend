@@ -7,6 +7,7 @@ import logRoutes from "./routes/logRoutes.js";
 import actionRoutes from "./routes/actionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import scheduleRoutes from "./routes/scheduleRoutes.js";
 
 import "./serial/serialListener.js";
 
@@ -21,5 +22,6 @@ app.use("/logs", logRoutes);
 app.use("/actions", actionRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/schedules", scheduleRoutes);
 
 export default app;
