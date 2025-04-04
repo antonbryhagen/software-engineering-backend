@@ -9,7 +9,8 @@ const validateJWT = (req, res, next) => {
 
     try {
         const secret = process.env.JWT_SECRET;
-        const jwtPayload = jwt.verify(authHeader, secret);
+        const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader;
+        const jwtPayload = jwt.verify(token, secret);
         req.user = jwtPayload;
         next();
     } catch (error) {
