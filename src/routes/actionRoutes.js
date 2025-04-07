@@ -1,13 +1,11 @@
 import express from "express";
-import jwtValidator from "../middleware/jwtValidator.js";
-import { getAllActions, getActionsByDevice, getActionsByUser } from "../controllers/actionController.js";
+import * as actionController from "../controllers/actionController.js";
+import authenticate from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-router.get("/", jwtValidator, getAllActions);
+router.use(authenticate);
 
-router.get("/device/:device_id", jwtValidator, getActionsByDevice);
-
-router.get("/user/:user_id", jwtValidator, getActionsByUser);
+router.get("/", actionController.getAllActions);
 
 export default router;

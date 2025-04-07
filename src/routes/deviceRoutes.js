@@ -1,20 +1,15 @@
 import express from "express";
-import jwtValidator from "../middleware/jwtValidator.js";
-
-import { getAllDevices, updateDevice, deleteDevice, toggleDevice, registerDevice } from "../controllers/deviceController.js";
-
+import * as deviceController from "../controllers/deviceController.js";
+import authenticate from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-router.patch("/:device_id", jwtValidator, registerDevice)
+router.use(authenticate);
 
-router.get("/", jwtValidator, getAllDevices)
-
-router.put("/:device_id", jwtValidator, updateDevice)
-
-router.delete("/:device_id", jwtValidator, deleteDevice)
-
-router.patch("/:device_id/toggle", jwtValidator, toggleDevice)
-
+router.get("/", deviceController.getAllDevices);
+router.post("/register/:device_id", deviceController.registerDevice);
+router.put("/:device_id", deviceController.updateDevice);
+router.delete("/:device_id", deviceController.deleteDevice);
+router.patch("/:device_id/toggle", deviceController.toggleDevice);
 
 export default router;

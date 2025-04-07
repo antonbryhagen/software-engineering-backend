@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import db from "../../models/index.js";
+import db from "../models/index.js";
 
 const fakeParser = new EventEmitter();
 

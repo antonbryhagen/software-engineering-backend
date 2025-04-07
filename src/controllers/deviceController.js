@@ -1,11 +1,18 @@
 import bcrypt from "bcrypt";
-import db from "../../models/index.js"
+import db from "../models/index.js"
 import { status } from "init";
 import { where } from "sequelize";
 import { sendSerialJson } from "../serial/serialSender.js";
 
 const { Device } = db;
 const { Log } = db;
+const deviceConnections = new Map();
+
+// store WebSocket connection for a device
+export const registerDeviceConnection = (deviceId, ws) => {
+    deviceConnections.set(deviceId, ws);
+};
+
 
 export const getAllDevices = async (req, res) => {
     try {
@@ -100,7 +107,7 @@ export const updateDevice = async (req, res) => {
 		}
 
         currentDevice.deviceName = device_name || currentDevice.deviceName;
-        /*SHOULD NOT BE SET BY API, TROUGH ARDUINO / SIMULATED HOUSEcurrentDevice.deviceType = device_type || currentDevice.deviceType;*/
+        
         currentDevice.location = location || currentDevice.location;
 
 		await currentDevice.save();
@@ -150,42 +157,49 @@ export const deleteDevice = async (req, res) => {
 
 export const toggleDevice = async (req, res) => {
     let id;
-    try{
-		id = req.params.device_id;
+    try {
+        id = req.params.device_id;
         const newStatus = req.body.status;
         const userId = req.user.user_id;
 
-		const device = await Device.findByPk(id);
+        const device = await db.Device.findByPk(id);
 
-		if (!device) {
-			return res.status(404).json({ message: "Device not found" });
-		}
+        if (!device) {
+            return res.status(404).json({ message: "Device not found" });
+        }
 
         if (!newStatus) {
             return res.status(400).json({ message: "No updated status provided" });
         }
 
-        const messageForDevice = {
-            message_type: "device_update",
-            device_id: parseInt(id),
-            status: newStatus
+        // Send message to device via WebSocket
+        const ws = deviceConnections.get(parseInt(id));
+        if (ws) {
+            const message = {
+                message_type: "device_update",
+                device_id: parseInt(id),
+                status: newStatus
+            };
+            
+            ws.send(JSON.stringify(message));
+        } else {
+            console.log(`No WebSocket connection for device ${id}`);
+            return res.status(400).json({ message: "Device not connected" });
         }
 
-        sendSerialJson(messageForDevice);
-
-        await Device.update(
+        await db.Device.update(
             { status: newStatus, updatedBy: userId },
             { where: { id }, individualHooks: true }
-        )
-	
-		res.json({ device_id: device.id, status: newStatus });
+        );
 
-	} catch (error) {
-		console.log("Error toggling device: ", error);
+        res.json({ device_id: device.id, status: newStatus });
+
+    } catch (error) {
+        console.log("Error toggling device: ", error);
         await Log.create({
             deviceId: id,
             eventDescription: "Error toggling device. " + error,
         });
-		return res.status(500).json({ message: "Internal Server Error" });
-	}
-}
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};

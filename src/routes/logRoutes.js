@@ -1,11 +1,12 @@
 import express from "express";
-import jwtValidator from "../middleware/jwtValidator.js";
-import { getAllLogs, getLogsFromDate } from "../controllers/logController.js";
+import * as logController from "../controllers/logController.js";
+import authenticate from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-router.get("/", jwtValidator, getAllLogs);
+router.use(authenticate);
 
-router.get("/:date", jwtValidator, getLogsFromDate);
+router.get("/", logController.getAllLogs);
+router.get("/from/:date", logController.getLogsFromDate);
 
 export default router;

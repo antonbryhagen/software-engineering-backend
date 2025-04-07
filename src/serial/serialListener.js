@@ -1,5 +1,5 @@
 import { parser, useSerial } from "./serialConnection.js";
-import db from "../../models/index.js";
+import db from "../models/index.js";
 import { sendSerialJson } from "./serialSender.js";
 
 if (useSerial) {

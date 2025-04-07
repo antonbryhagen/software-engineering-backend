@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>WebSocket test</title></head>
+<body>
+    <h2>Socket.IO Sensor Data</h2>
+    <div id="output"></div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script>
+    const socket = io("http://localhost:1234");
+
+    socket.on("connect", () => {
+        console.log("Connected to server");
+
+        setTimeout(() => {
+            socket.emit("command", { device: "light", action: "OFF" });
+        }, 2000);
+    });
+
+    socket.on("deviceUpdate", (data) => {
+        console.log("Device update:", data);
+    });
+
+    socket.on("commandExecuted", (res) => {
+        console.log("Command result:", res);
+    });
+</script>
+</body>
+</html>

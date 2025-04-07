@@ -1,17 +1,15 @@
 import express from "express";
-import jwtValidator from "../middleware/jwtValidator.js";
-import { getAllSensors, getSensorById, registerSensor, updateSensor, deleteSensor } from "../controllers/sensorController.js";
+import * as sensorController from "../controllers/sensorController.js";
+import authenticate from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-router.get("/", jwtValidator, getAllSensors);
+router.use(authenticate);
 
-router.get("/:sensor_id", jwtValidator, getSensorById);
-
-router.patch("/:sensor_id", jwtValidator, registerSensor);
-
-router.put("/:sensor_id", jwtValidator, updateSensor);
-
-router.delete("/:sensor_id", jwtValidator, deleteSensor);
+router.get("/", sensorController.getAllSensors);
+router.get("/:sensor_id", sensorController.getSensorById);
+router.post("/register/:sensor_id", sensorController.registerSensor);
+router.put("/:sensor_id", sensorController.updateSensor);
+router.delete("/:sensor_id", sensorController.deleteSensor);
 
 export default router;

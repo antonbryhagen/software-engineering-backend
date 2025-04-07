@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart House WebSocket Test</title>
+</head>
+<body>
+    <h1>Smart House WebSocket</h1>
+    <pre id="log" style="background: #f0f0f0; padding: 1em;"></pre>
+    <button onclick="sendCommand('on')">Turn Light ON</button>
+    <button onclick="sendCommand('off')">Turn Light OFF</button>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const log = (msg) => {
+            const logEl = document.getElementById("log");
+            logEl.innerText += msg + "\n";
+        };
+
+        ws.onopen = () => {
+            log("Connected to WebSocket server");
+
+    
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            log("Message from server: " + JSON.stringify(data));
+        };
+
+        function sendCommand(status) {
+            const message = {
+                message_type: "device_update",
+                device_id: 1,
+                status: status
+            };
+
+            ws.send(JSON.stringify(message));
+            log("Sent command: " + JSON.stringify(message));
+        }
+    </script>
+</body>
+</html>
