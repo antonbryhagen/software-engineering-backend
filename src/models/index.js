@@ -1,9 +1,10 @@
-import  Sequelize from '../config/database.js';
-import dotenv from "dotenv";
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js'; 
+import dotenv from 'dotenv';
 dotenv.config();
 
 
-const sequelize = new Sequelize(
+/*const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASSWORD,
@@ -11,12 +12,13 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST,
         dialect: "mysql"
     }
-);
+);*/
+
 
 // Creating an empty db object
 const db = {
     sequelize,
-    Sequelize
+    DataTypes 
 };
 
 
@@ -26,10 +28,10 @@ import LogModel from "./Log.js";
 import UserModel from "./user.js";  
 
 // 4. Initialize all models
-db.Action = ActionModel(sequelize, Sequelize.DataTypes);
-db.Device = DeviceModel(sequelize, Sequelize.DataTypes);
-db.Log = LogModel(sequelize, Sequelize.DataTypes);
-db.User = UserModel(sequelize, Sequelize.DataTypes); 
+db.Action = ActionModel(sequelize, DataTypes);
+db.Device = DeviceModel(sequelize, DataTypes);
+db.Log = LogModel(sequelize, DataTypes);
+db.User = UserModel(sequelize, DataTypes); 
 
 
 db.User.hasMany(db.Action, { foreignKey: "userId" });
