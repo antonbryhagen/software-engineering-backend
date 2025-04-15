@@ -88,6 +88,10 @@ if (useSerial) {
           console.log(`Sensor ${jsonData.sensor_id} updated: Value = ${jsonData.value} ${jsonData.unit}`);
           break;
 
+          case "ack":
+            console.log("Acknowledgment received from physical house:", jsonData);
+          break;
+
         default:
           console.error("Unknown message type:", jsonData.message_type);
       }
