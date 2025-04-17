@@ -1,3 +1,5 @@
+/* Author(s): Anton Bryhagen */
+
 import bcrypt from "bcrypt";
 import db from "../../models/index.js"
 import { status } from "init";
@@ -7,6 +9,14 @@ import { sendSerialJson } from "../serial/serialSender.js";
 const { Device } = db;
 const { Log } = db;
 
+/**
+ * Retrieves all devices from the database.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response containing the list of devices.
+ * @throws {Error} - If there is an error retrieving the devices.
+ */
 export const getAllDevices = async (req, res) => {
     try {
 
@@ -46,6 +56,14 @@ export const getAllDevices = async (req, res) => {
     }
 }
 
+/**
+ * Registers a device.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object with the registered device details.
+ * @throws {Error} - If there is an error registering the device.
+ */
 export const registerDevice = async (req, res) => {
     let id;
     try {
@@ -91,6 +109,14 @@ export const registerDevice = async (req, res) => {
     }
 }
 
+/**
+ * Updates a device.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object with update confirmation message
+ * @throws {Error} - If there is an error updating the device.
+ */
 export const updateDevice = async (req, res) => {
     let id;
     try {
@@ -113,7 +139,7 @@ export const updateDevice = async (req, res) => {
 
 		await currentDevice.save();
 
-        res.json( {message: "Device updated"} );
+        return res.json( {message: "Device updated"} );
 
     } catch (error) {
         console.log("Error updating device: ", error);
@@ -125,6 +151,14 @@ export const updateDevice = async (req, res) => {
     }
 }
 
+/**
+ * Deletes a device.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object with a message indicating the success or failure of the deletion.
+ * @throws {Error} - If there is an error deleting the device.
+ */
 export const deleteDevice = async (req, res) => {
     let id;
 	try{
@@ -156,6 +190,14 @@ export const deleteDevice = async (req, res) => {
 	
 }
 
+/**
+ * Toggles the status of a device.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object with the updated device status.
+ * @throws {Error} - If an error occurs while toggling the device.
+ */
 export const toggleDevice = async (req, res) => {
     let id;
     try{

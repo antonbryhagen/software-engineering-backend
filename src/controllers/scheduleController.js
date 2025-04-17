@@ -1,3 +1,5 @@
+/* Author(s): Anton Bryhagen */
+
 import db from "../../models/index.js";
 import schedule from "node-schedule";
 import { sendSerialJson } from "../serial/serialSender.js";
@@ -6,6 +8,14 @@ const { Schedule, Device } = db;
 
 const jobs = new Map();
 
+/**
+ * Sets a new schedule for a device.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The response object with the created schedule details.
+ * @throws {Error} If there is an error fetching logs or an internal server error occurs.
+ */
 export const setNewSchedule = async (req, res) => {
     try {
         const { device_id, action_type, scheduled_time } = req.body;
@@ -81,6 +91,14 @@ export const setNewSchedule = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves all schedules from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object containing the formatted schedules.
+ * @throws {Error} - If there is an error retrieving the schedules.
+ */
 export const getAllSchedules = async (req, res) => {
     try {
         const schedules = await Schedule.findAll({
@@ -94,7 +112,7 @@ export const getAllSchedules = async (req, res) => {
             scheduled_time: schedule.scheduleTime
         })) 
 
-        res.json(formattedSchedules)
+        return res.json(formattedSchedules)
 
     } catch (error) {
         console.log("Error getting all schedules: ", error);
@@ -102,6 +120,14 @@ export const getAllSchedules = async (req, res) => {
     }
 }
 
+/**
+ * Deletes a schedule.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The response object with a success or error message.
+ * @throws {Error} If there is an error deleting the schedule.
+ */
 export const deleteSchedule = async (req, res) => {
     try {
         const scheduleId = req.params.schedule_id;

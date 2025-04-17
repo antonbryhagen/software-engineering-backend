@@ -1,9 +1,18 @@
+/* Author(s): Anton Bryhagen */
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../../models/index.js"
 
 const { User } = db;
 
+/**
+ * Creates a new user.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} A promise that resolves when the user is created.
+ */
 export const createUser = async (req, res) => {
     try {
         const { username, password, admin } = req.body;
@@ -34,6 +43,13 @@ export const createUser = async (req, res) => {
     }
 }
 
+/**
+ * Authenticates a user by checking the provided username and password.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves once the authentication process is complete.
+ */
 export const authenticateUser = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -68,6 +84,13 @@ export const authenticateUser = async (req, res) => {
     }
 }
 
+/**
+ * Retrieves a user by their ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the user is retrieved.
+ */
 export const getUserById = async (req, res) => {
     try {
         const id = req.params.user_id;
@@ -96,6 +119,13 @@ export const getUserById = async (req, res) => {
     }
 }
 
+/**
+ * Retrieves all users from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ */
 export const getAllUsers = async (req, res) => {
     try {
         if(!req.user.admin){
@@ -118,6 +148,14 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
+/**
+ * Deletes a user by their ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ * @throws {Error} - If there is an error deleting the user.
+ */
 export const deleteUserById = async (req, res) => {
     try {
         if(!req.user.admin){
