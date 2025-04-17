@@ -9,6 +9,9 @@ const { Log } = db;
 
 export const getAllDevices = async (req, res) => {
     try {
+
+        const { registered } = req.query;
+
         const devices = await Device.findAll({
             attributes: ["id", "deviceType", "deviceName", "status", "location", "lastUpdate", "updatedAt", "createdAt", "registered"],
         });
@@ -24,6 +27,11 @@ export const getAllDevices = async (req, res) => {
             created_at: device.createdAt,
             registered: device.registered
         })) 
+
+        if (registered) {
+            const filteredDevices = formattedDevices.filter(device => device.registered === (registered === 'true'));
+            return res.json(filteredDevices);
+        }
 
         res.json(formattedDevices)
 
