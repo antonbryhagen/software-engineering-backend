@@ -1,9 +1,15 @@
+/* Author(s): Anton Bryhagen */
+
 import express from "express";
 import jwtValidator from "../middleware/jwtValidator.js";
 
 import { getAllDevices, updateDevice, deleteDevice, toggleDevice, registerDevice } from "../controllers/deviceController.js";
 
 
+/**
+ * Express router for handling device routes.
+ * @type {express.Router}
+ */
 const router = express.Router();
 
 router.patch("/:device_id", jwtValidator, registerDevice)

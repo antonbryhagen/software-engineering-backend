@@ -1,5 +1,13 @@
+/* Author(s): Anton Bryhagen */
+
 import { port, useSerial } from './serialConnection.js';
 
+/**
+ * Sends a JSON message over the serial port.
+ * 
+ * @param {Object} jsonMessage - The JSON message to be sent.
+ * @returns {void}
+ */
 function sendSerialJson(jsonMessage) {
     if (useSerial){
         if (!port.isOpen) {
