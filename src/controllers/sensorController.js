@@ -11,7 +11,7 @@ export const getAllSensors = async (req, res) => {
     res.json(sensors.map(sensor => ({
       sensor_id: sensor.id,
       sensor_type: sensor.sensorType,
-      value: sensor.value,
+      value: sensor.sensorType === "button" ? (sensor.value === 0 ? "off" : "on") : sensor.value,
       unit: sensor.unit,
       location: sensor.location,
       last_reading: sensor.lastReading,
@@ -36,7 +36,7 @@ export const getSensorById = async (req, res) => {
     res.json({
       sensor_id: sensor.id,
       sensor_type: sensor.sensorType,
-      value: sensor.value,
+      value: sensor.sensorType === "button" ? (sensor.value === 0 ? "off" : "on") : sensor.value,
       unit: sensor.unit,
       location: sensor.location,
       last_reading: sensor.lastReading,

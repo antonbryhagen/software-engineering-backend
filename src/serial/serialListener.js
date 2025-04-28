@@ -75,10 +75,9 @@ if (useSerial) {
             console.error(`Error: Sensor with ID ${jsonData.sensor_id} not found.`);
             return;
           }
-
           await db.Sensor.update(
             {
-              value: jsonData.value || 0,
+              value: sensorExists.sensorType === "button" ? (jsonData.value === "off" ? 0 : 1) : jsonData.value || 0,
               unit: jsonData.unit || "Unknown",
               lastReading: new Date()
             },
