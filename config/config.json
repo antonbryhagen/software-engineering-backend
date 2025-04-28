@@ -1,5 +1,3 @@
-//here needs to be changed for each created db
-
 {
   "development": {
     "username": "root",

@@ -2,7 +2,6 @@ import { Sequelize } from "sequelize";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
-
 import UserModel from "./user.js";
 import DeviceModel from "./device.js";
 import ActionModel from "./Action.js";
