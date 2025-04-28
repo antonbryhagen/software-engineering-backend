@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-
+//this one is for the fake arduino that test on the server through wifi, not the arduino itself.
 const ws = new WebSocket('ws://localhost:8080');
 
 ws.on('open', () => {

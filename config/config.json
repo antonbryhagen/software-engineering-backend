@@ -1,7 +1,9 @@
+//here needs to be changed for each created db
+
 {
   "development": {
     "username": "root",
-    "password": "root1234",
+    "password": "root",
     "database": "interactivehouse",
     "host": "localhost",
     "dialect": "mysql"
