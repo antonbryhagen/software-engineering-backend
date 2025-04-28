@@ -19,7 +19,7 @@
     "url": "https://github.com/antonbryhagen/software-engineering-backend/issues"
   },
   "homepage": "https://github.com/antonbryhagen/software-engineering-backend#readme",
-  "description": "",
+  "description": "This will guide you to set up the server on your local machine. A prerequisite is that you have Node version 22 or later installed",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -32,9 +32,12 @@
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2",
     "serialport": "^13.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
+  },
+  "directories": {
+    "test": "tests"
   }
 }
