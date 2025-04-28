@@ -1,12 +1,12 @@
 
 import { WebSocketServer } from 'ws';
-import db from '../models/index.js'; //
+import db from '../models/index.js'; //make sure to use the correct path to your models
 const wss = new WebSocketServer({ port: 8080 }); //WebSocket port
 
-console.log("🌐 WebSocket server running on ws://localhost:8080");
+console.log("WebSocket server running on ws://localhost:8080");
 
 wss.on('connection', (ws) => {
-  console.log('🔌 New WebSocket client connected');
+  console.log('New WebSocket client connected');
 
   ws.on('message', (message) => {
     try {
@@ -18,7 +18,7 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {    
-    console.log('🔌 WebSocket connection closed');
+    console.log('WebSocket connection closed');
   });
 });
 
@@ -86,7 +86,7 @@ async function handleDeviceMessage(data, ws) {
           { where: { id: sensor_id } }
         );
 
-        console.log(`📡 Sensor ${sensor_id} updated: ${value} ${unit}`);
+        console.log(`Sensor ${sensor_id} updated: ${value} ${unit}`);
 
         ws.send(JSON.stringify({
           message_type: "ack",
