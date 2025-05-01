@@ -1,56 +1,76 @@
-import { Sequelize } from "sequelize";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
+import fs from "fs";
 import path from "path";
-import UserModel from "./user.js";
-import DeviceModel from "./device.js";
-import ActionModel from "./Action.js";
-import LogModel from "./Log.js";
-import ScheduleModel from "./Schedule.js";
-import SensorModel from "./Sensor.js";
+import { fileURLToPath, pathToFileURL } from "url";
+import Sequelize from "sequelize";
+import process from "process";
+import configFile from "../config/config.json" with { type: "json" };
 
-// Setup __dirname manually (because we're using ES modules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Read config.json manually
-const configPath = path.resolve(__dirname, "../config/config.json");
-const configFile = JSON.parse(readFileSync(configPath, "utf-8"));
-
+const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = configFile[env];
 
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    host: config.host,
-    dialect: config.dialect,
-  }
-);
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
 const db = {};
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+const modelFiles = fs
+  .readdirSync(__dirname)
+  .filter((file) => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js" &&
+      !file.endsWith(".test.js")
+    );
+  });
 
-db.User = UserModel(sequelize);
-db.Device = DeviceModel(sequelize);
-db.Action = ActionModel(sequelize);
-db.Log = LogModel(sequelize);
-db.Schedule = ScheduleModel(sequelize);
-db.Sensor = SensorModel(sequelize);
+for (const file of modelFiles) {
+  const fileUrl = pathToFileURL(path.join(__dirname, file)).href;
+  const modelModule = await import(fileUrl);
+  const model = modelModule.default(sequelize, Sequelize.DataTypes);
+  db[model.name] = model;
+}
 
-// Associations
+db.User.hasMany(db.Action, { foreignKey: "userId" });
+db.User.hasMany(db.Schedule, { foreignKey: "userId" });
+
+db.Device.hasMany(db.Action, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Log, { foreignKey: "deviceId" });
+db.Device.hasMany(db.Schedule, { foreignKey: "deviceId" });
+
+db.Sensor.hasMany(db.Log, { foreignKey: "sensorId" });
+
 db.Action.belongsTo(db.User, { foreignKey: "userId" });
 db.Action.belongsTo(db.Device, { foreignKey: "deviceId" });
 
 db.Log.belongsTo(db.Device, { foreignKey: "deviceId" });
 db.Log.belongsTo(db.Sensor, { foreignKey: "sensorId" });
 
+db.Schedule.belongsTo(db.User, { foreignKey: "userId" });
 db.Schedule.belongsTo(db.Device, { foreignKey: "deviceId" });
 
-db.Device.belongsTo(db.User, { foreignKey: "updatedBy" });
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+const initDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected");
+    await sequelize.sync({ alter: true });
+    console.log("Tables synchronized");
+  } catch (error) {
+    console.error("Database connection error:", error);
+  }
+};
+
+initDB();
 
 export default db;

@@ -3,7 +3,7 @@
 import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
 
-export const useSerial = false; 
+export const useSerial = true; // Set this to true to enable serial communication, false to disable
 
 /**
  * Serial port connection.
