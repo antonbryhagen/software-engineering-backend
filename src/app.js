@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import scheduleRoutes from "./routes/scheduleRoutes.js";
 
 import "./serial/serialListener.js";
+import "./wbserver.js"
 
 const app = express();
 

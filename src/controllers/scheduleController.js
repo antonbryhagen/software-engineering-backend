@@ -3,7 +3,7 @@
 import db from "../../models/index.js";
 import schedule from "node-schedule";
 import { sendSerialJson } from "../serial/serialSender.js";
-
+import { sendWebSocketJson } from '../wbSocketSender.js'; //added to be able to send msg
 const { Schedule, Device } = db;
 
 const jobs = new Map();
@@ -67,6 +67,7 @@ export const setNewSchedule = async (req, res) => {
             }
     
             sendSerialJson(messageForDevice);
+            sendWebSocketJson(messageForDevice);
     
             await Device.update(
                 { status: newStatus, updatedBy: userId },

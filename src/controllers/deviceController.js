@@ -5,6 +5,7 @@ import db from "../../models/index.js"
 import { status } from "init";
 import { where } from "sequelize";
 import { sendSerialJson } from "../serial/serialSender.js";
+import { sendWebSocketJson } from '../wbSocketSender.js';
 
 const { Device } = db;
 const { Log } = db;
@@ -222,6 +223,7 @@ export const toggleDevice = async (req, res) => {
         }
 
         sendSerialJson(messageForDevice);
+        sendWebSocketJson(messageForDevice);
 
         await Device.update(
             { status: newStatus, updatedBy: userId },

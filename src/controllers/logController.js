@@ -1,5 +1,4 @@
 import db from "../../models/index.js";
-
 const { Log } = db;
 
 export const getAllLogs = async (req, res) => {
