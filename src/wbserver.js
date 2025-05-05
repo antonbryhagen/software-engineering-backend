@@ -1,13 +1,15 @@
 
 import { WebSocketServer } from 'ws';
 import db from '../models/index.js'; //make sure to use the correct path to your models
-const wss = new WebSocketServer({ port: 8080 }); //WebSocket port
 
+const wss = new WebSocketServer({ port: 8080 }); //WebSocket port
 console.log("WebSocket server running on ws://localhost:8080");
+const clients = new Set();
 
 wss.on('connection', (ws) => {
   console.log('New WebSocket client connected');
-
+  clients.add(ws);
+  
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
@@ -106,3 +108,15 @@ async function handleDeviceMessage(data, ws) {
     console.error('Error handling device message:', error);
   }
 }
+
+  export function sendWebSocketMessage(message) {
+    const messageString = JSON.stringify(message);
+  
+    for (const client of clients) {
+      if (client.readyState === 1) { 
+        client.send(messageString);
+      }
+    }
+  }
+  
+  export { wss };

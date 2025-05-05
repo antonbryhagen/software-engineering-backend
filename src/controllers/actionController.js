@@ -1,5 +1,6 @@
 import db from "../../models/index.js";
 
+
 const { Action, User, Device } = db;
 
 export const getAllActions = async (req, res) => {
