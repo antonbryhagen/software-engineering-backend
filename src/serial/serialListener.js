@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import { parser, useSerial } from "./serialConnection.js";
 import db from "../../models/index.js";
 import { sendSerialJson } from "./serialSender.js";
@@ -22,7 +23,7 @@ if (useSerial) {
               console.log("Existing Device Found:", existingDevice.toJSON());
               sendSerialJson({ message_type: "registered", device_id: existingDevice.id });
               // Send saved status to device
-              setTimeout(() => {sendSerialJson({ message_type: "device_update", device_id: existingDevice.id, status: existingDevice.status });}, 1000);
+              setTimeout(() => { sendSerialJson({ message_type: "device_update", device_id: existingDevice.id, status: existingDevice.status }); }, 1000);
             } else {
               const newDevice = await db.Device.create({
                 deviceName: `Auto_${jsonData.device_type}`,
@@ -87,8 +88,8 @@ if (useSerial) {
           console.log(`Sensor ${jsonData.sensor_id} updated: Value = ${jsonData.value} ${jsonData.unit}`);
           break;
 
-          case "ack":
-            console.log("Acknowledgment received from physical house:", jsonData);
+        case "ack":
+          console.log("Acknowledgment received from physical house:", jsonData);
           break;
 
         default:

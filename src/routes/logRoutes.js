@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import express from "express";
 import jwtValidator from "../middleware/jwtValidator.js";
 import { getAllLogs, getLogsFromDate } from "../controllers/logController.js";
