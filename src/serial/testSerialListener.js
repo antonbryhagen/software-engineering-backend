@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import { EventEmitter } from "events";
 import db from "../../models/index.js";
 

@@ -1,3 +1,5 @@
+/* Author(s): Kotayba Sayed */
+
 import db from "../../models/index.js";
 
 const { Sensor, Log } = db;
@@ -5,11 +7,12 @@ const { Sensor, Log } = db;
 export const getAllSensors = async (req, res) => {
   try {
     const sensors = await Sensor.findAll({
-      attributes: ["id", "sensorType", "value", "unit", "location", "lastReading", "registered"]
+      attributes: ["id", "sensorName", "sensorType", "value", "unit", "location", "lastReading", "registered"]
     });
 
     res.json(sensors.map(sensor => ({
       sensor_id: sensor.id,
+      sensor_name: sensor.sensorName,
       sensor_type: sensor.sensorType,
       value: sensor.sensorType === "button" ? (sensor.value === 0 ? "off" : "on") : sensor.value,
       unit: sensor.unit,
@@ -35,6 +38,7 @@ export const getSensorById = async (req, res) => {
 
     res.json({
       sensor_id: sensor.id,
+      sensor_name: sensor.sensorName,
       sensor_type: sensor.sensorType,
       value: sensor.sensorType === "button" ? (sensor.value === 0 ? "off" : "on") : sensor.value,
       unit: sensor.unit,
@@ -69,7 +73,7 @@ export const registerSensor = async (req, res) => {
 
     await sensor.save();
 
-    res.json({ message: "Sensor registered", sensor_id: sensor.id, sensor_name });
+    res.json({ message: "Sensor registered", sensor_id: sensor.id, sensor_name: sensor.sensorName });
 
   } catch (error) {
     console.log("Error registering sensor:", error);
@@ -96,7 +100,7 @@ export const updateSensor = async (req, res) => {
 
     await sensor.save();
 
-    res.json({ message: "Sensor updated" });
+    res.json({ message: "Sensor updated", sensor_name: sensor.sensorName });
 
   } catch (error) {
     console.log("Error updating sensor:", error);
