@@ -52,7 +52,9 @@ if (useSerial) {
                 unit: jsonData.unit || "Unknown",
                 location: "Unknown",
                 registered: false,
-                pin: jsonData.pin
+                pin: jsonData.pin,
+                sensorName: jsonData.sensor_name || `Auto_${jsonData.sensor_type}`
+
               });
 
               console.log("New Sensor Registered:", newSensor.toJSON());
