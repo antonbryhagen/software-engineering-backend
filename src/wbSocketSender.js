@@ -1,3 +1,7 @@
+
+/* Author: Nahed Al Awlaki */
+
+
 import { sendWebSocketMessage } from './wbserver.js';
 
 /**

@@ -1,4 +1,6 @@
 
+/* Author: Nahed Al Awlaki*/
+
 import { WebSocketServer } from 'ws';
 import db from '../models/index.js'; //make sure to use the correct path to your models
 
