@@ -1,5 +1,4 @@
-
-/* Author: Nahed Al Awlaki */
+/* Author(s): Kotayba Sayed, Nahed Al Awlaki */
 
 import { EventEmitter } from "events";
 import db from "../../models/index.js";

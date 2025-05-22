@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {

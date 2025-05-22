@@ -1,3 +1,5 @@
+/* Author(s): Kotayba Sayed */
+
 import db from "../../models/index.js";
 const { Log } = db;
 

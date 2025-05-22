@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import { parser, useSerial } from "./serialConnection.js";
 import db from "../../models/index.js";
 import { sendSerialJson } from "./serialSender.js";
@@ -22,7 +23,7 @@ if (useSerial) {
               console.log("Existing Device Found:", existingDevice.toJSON());
               sendSerialJson({ message_type: "registered", device_id: existingDevice.id });
               // Send saved status to device
-              setTimeout(() => {sendSerialJson({ message_type: "device_update", device_id: existingDevice.id, status: existingDevice.status });}, 1000);
+              setTimeout(() => { sendSerialJson({ message_type: "device_update", device_id: existingDevice.id, status: existingDevice.status }); }, 1000);
             } else {
               const newDevice = await db.Device.create({
                 deviceName: `Auto_${jsonData.device_type}`,
@@ -51,7 +52,9 @@ if (useSerial) {
                 unit: jsonData.unit || "Unknown",
                 location: "Unknown",
                 registered: false,
-                pin: jsonData.pin
+                pin: jsonData.pin,
+                sensorName: jsonData.sensor_name || `Auto_${jsonData.sensor_type}`
+
               });
 
               console.log("New Sensor Registered:", newSensor.toJSON());
@@ -75,10 +78,9 @@ if (useSerial) {
             console.error(`Error: Sensor with ID ${jsonData.sensor_id} not found.`);
             return;
           }
-
           await db.Sensor.update(
             {
-              value: jsonData.value || 0,
+              value: sensorExists.sensorType === "button" ? (jsonData.value === "off" ? 0 : 1) : jsonData.value || 0,
               unit: jsonData.unit || "Unknown",
               lastReading: new Date()
             },
@@ -88,8 +90,8 @@ if (useSerial) {
           console.log(`Sensor ${jsonData.sensor_id} updated: Value = ${jsonData.value} ${jsonData.unit}`);
           break;
 
-          case "ack":
-            console.log("Acknowledgment received from physical house:", jsonData);
+        case "ack":
+          console.log("Acknowledgment received from physical house:", jsonData);
           break;
 
         default:

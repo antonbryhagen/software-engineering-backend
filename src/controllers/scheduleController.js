@@ -37,15 +37,15 @@ export const setNewSchedule = async (req, res) => {
 
         // Set schedule to toggle device status
         const jobDate = new Date(scheduled_time);
+        jobDate.setUTCHours(jobDate.getUTCHours() - 2);
 
         if(jobDate < new Date()){
             return res.status(400).json({ message: "Scheduled time must be in the future" });
         }
-
         const newSchedule = await Schedule.create({
             deviceId: device_id,
             actionType: action_type,
-            scheduleTime: scheduled_time,
+            scheduleTime: jobDate,
             userId: userId
         });
 
@@ -110,8 +110,8 @@ export const getAllSchedules = async (req, res) => {
             schedule_id: schedule.id,
             device_id: schedule.deviceId,
             action_type: schedule.actionType,
-            scheduled_time: schedule.scheduleTime
-        })) 
+            scheduled_time: new Date(schedule.scheduleTime.getTime() + 2 * 60 * 60 * 1000).toISOString()
+        }))
 
         return res.json(formattedSchedules)
 

@@ -1,3 +1,4 @@
+/* Author(s): Kotayba Sayed */
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
@@ -6,6 +7,10 @@ export default (sequelize) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
+    },
+    sensorName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     sensorType: {
       type: DataTypes.STRING,

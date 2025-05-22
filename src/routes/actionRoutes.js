@@ -1,3 +1,5 @@
+/* Author(s): Kotayba Sayed */
+
 import express from "express";
 import jwtValidator from "../middleware/jwtValidator.js";
 import { getAllActions, getActionsByDevice, getActionsByUser } from "../controllers/actionController.js";
