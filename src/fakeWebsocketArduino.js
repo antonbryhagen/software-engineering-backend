@@ -1,13 +1,17 @@
-
-/* Author: Nahed Al Awlaki */ 
-
+/* Author: Nahed Al Awlaki - Upgraded for WSS + JWT */
 
 import WebSocket from 'ws';
-//this one is for the fake arduino that test on the server through wifi, not the arduino itself.
-const ws = new WebSocket('ws://localhost:8080');
+
+//put token for auth    
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InRlc3RVc2VyIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE3NDk4MzcxODUsImV4cCI6MTc0OTg0MDc4NX0.287NQnILxGV6MAV1_2A4HrAaDmh0wdY2oJtgZXdqemE';
+
+// Create secure WebSocket connection with token
+const ws = new WebSocket(`wss://localhost:1234/?token=${token}`, {
+  rejectUnauthorized: false // Allow self-signed certs during development
+});
 
 ws.on('open', () => {
-  console.log('🔌 Connected to WebSocket server');
+  console.log('Connected to WebSocket server securely');
 
   // Send Device Registration
   const deviceRegisterMessage = JSON.stringify({
@@ -18,7 +22,7 @@ ws.on('open', () => {
   ws.send(deviceRegisterMessage);
   console.log('Sent device register message');
 
-  // Send Sensor Registration
+  // Send Sensor Registration after 2 seconds
   setTimeout(() => {
     const sensorRegisterMessage = JSON.stringify({
       message_type: "register",
@@ -30,11 +34,11 @@ ws.on('open', () => {
     console.log('Sent sensor register message');
   }, 2000);
 
-  // Send Sensor Data
+  // Send Sensor Data after 5 seconds
   setTimeout(() => {
     const sensorDataMessage = JSON.stringify({
       message_type: "sensor_data",
-      sensor_id: 1,
+      sensor_id: 1,  // Replace with correct sensor_id after first run
       value: 25.5,
       unit: "Celsius"
     });

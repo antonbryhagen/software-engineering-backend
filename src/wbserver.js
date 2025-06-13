@@ -1,17 +1,50 @@
+/* Author: Nahed Al Awlaki - Upgraded for WSS + JWT */
 
-/* Author: Nahed Al Awlaki*/
-
+import https from 'https';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
 import { WebSocketServer } from 'ws';
-import db from '../models/index.js'; //make sure to use the correct path to your models
+import db from '../models/index.js';
+import "dotenv/config";
 
-const wss = new WebSocketServer({ port: 8080 }); //WebSocket port
-console.log("WebSocket server running on ws://localhost:8080");
+// Loading SSL certs
+const serverOptions = {
+  key: fs.readFileSync('./certificate/key.pem'), //key.pem
+  cert: fs.readFileSync('./certificate/cert.pem') //cert.pem
+};
+
+// Create HTTPS server
+const httpsServer = https.createServer(serverOptions);
+
+// Create WebSocket server on top of HTTPS
+const wss = new WebSocketServer({ server: httpsServer });
+
+console.log("Secure WebSocket server running on wss://localhost:1234");
+
 const clients = new Set();
 
-wss.on('connection', (ws) => {
-  console.log('New WebSocket client connected');
-  clients.add(ws);
-  
+wss.on('connection', (ws, req) => {
+  // Extract token from query parameter
+  const url = new URL(req.url, `https://${req.headers.host}`);
+  const token = url.searchParams.get('token');
+
+  if (!token) {
+    console.log('Connection rejected: Missing token');
+    ws.close(4001, 'Missing token');
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    ws.user = decoded;
+    clients.add(ws);
+    console.log('WebSocket client authenticated:', decoded);
+  } catch (err) {
+    console.log('Connection rejected: Invalid token');
+    ws.close(4002, 'Invalid token');
+    return;
+  }
+
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
@@ -21,11 +54,13 @@ wss.on('connection', (ws) => {
     }
   });
 
-  ws.on('close', () => {    
+  ws.on('close', () => {
     console.log('WebSocket connection closed');
+    clients.delete(ws);
   });
 });
 
+// message handling logic
 async function handleDeviceMessage(data, ws) {
   const { message_type, device_type, sensor_type, pin, device_id, sensor_id, status, value, unit } = data;
 
@@ -50,9 +85,7 @@ async function handleDeviceMessage(data, ws) {
             message_type: 'registered',
             device_id: device.id
           }));
-        }
-
-        else if (sensor_type) {
+        } else if (sensor_type) {
           let sensor = await db.Sensor.findOne({ where: { pin } });
 
           if (!sensor) {
@@ -72,7 +105,6 @@ async function handleDeviceMessage(data, ws) {
             sensor_id: sensor.id
           }));
         }
-
         break;
 
       case 'sensor_data':
@@ -111,14 +143,13 @@ async function handleDeviceMessage(data, ws) {
   }
 }
 
-  export function sendWebSocketMessage(message) {
-    const messageString = JSON.stringify(message);
-  
-    for (const client of clients) {
-      if (client.readyState === 1) { 
-        client.send(messageString);
-      }
+export function sendWebSocketMessage(message) {
+  const messageString = JSON.stringify(message);
+  for (const client of clients) {
+    if (client.readyState === 1) {
+      client.send(messageString);
     }
   }
-  
-  export { wss };
+}
+
+export { wss, httpsServer };

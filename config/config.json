@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "password",
-    "database": "InteractiveHouse",
+    "password": "root",
+    "database": "interactivehouse",
     "host": "localhost",
     "dialect": "mysql"
   },
