@@ -3,7 +3,7 @@
 import WebSocket from 'ws';
 
 //put token for auth    
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InRlc3RVc2VyIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE3NDk4MzcxODUsImV4cCI6MTc0OTg0MDc4NX0.287NQnILxGV6MAV1_2A4HrAaDmh0wdY2oJtgZXdqemE';
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InRlc3RVc2VyIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE3NTAwMTQxMTgsImV4cCI6MTc1MDAxNzcxOH0.fr3Aa00o3QprvG5ob2-dNousjQePxm3pHMUhjWc_3gI";
 
 // Create secure WebSocket connection with token
 const ws = new WebSocket(`wss://localhost:1234/?token=${token}`, {
