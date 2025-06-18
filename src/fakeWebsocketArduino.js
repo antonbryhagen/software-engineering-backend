@@ -7,7 +7,7 @@ const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFt
 
 // Create secure WebSocket connection with token
 const ws = new WebSocket(`wss://localhost:1234/?token=${token}`, {
-  rejectUnauthorized: false // Allow self-signed certs during development
+  rejectUnauthorized: false // Allow self-signed certs during the development for secure connection
 });
 
 ws.on('open', () => {
@@ -38,7 +38,7 @@ ws.on('open', () => {
   setTimeout(() => {
     const sensorDataMessage = JSON.stringify({
       message_type: "sensor_data",
-      sensor_id: 1,  // Replace with correct sensor_id after first run
+      sensor_id: 1,  // Replace with the correct sensor_id after first run. This is just an example.
       value: 25.5,
       unit: "Celsius"
     });
